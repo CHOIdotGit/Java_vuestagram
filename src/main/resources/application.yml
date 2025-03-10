@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: vuestagram
+  # MariaDB ??
+  datasource:
+    url: jdbc:mariadb://localhost:3306/vuestagram
+    username: root
+    password: php504
+    driver-class-name: org.mariadb.jdbc.Driver
+
+# config ??
+config:
+# jwt?? jwt-config? ??? ? prefix??? ??? ???? ??.
+  jwt:
+    issuer: meerkat@green.com
+    type: jwt
+    access-token-expiry: 10000
+    refresh-token-expiry: 1296000000
+    refresh-token-cookie-name: refresh-token
+    refresh-token-cookie-expiry: 1296000
+    secret: 34h6baw46bw4tvgw4tgabwz34htbw4szybhe34ybh34tgv23a4tgv3w
+    header-key: Authorization
+    scheme: Bearer
+    reiss-uri: /api/reissue-token
+    # yml? ?? ??? ???? ??? ??? '-'? ???? ??.
