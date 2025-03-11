@@ -2,10 +2,11 @@ package com.example.vuestagram.util.jwt;
 
 import com.example.vuestagram.model.User;
 import com.example.vuestagram.util.jwt.config.JwtConfig;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -56,5 +57,30 @@ public class JwtUtil {
                 // .signWith(secretKey, SignatureAlgorithm.HS256)
                 .signWith(secretKey)
                 .compact();
+    }
+
+    // 페이로드(Claims) 추출 및 검증 메소드
+    public Claims getClaims(String token) {
+        return Jwts.parser()                //JWT 파서 객체 생성
+                .verifyWith(this.secretKey) // 서명 검증을 위한 비밀 키 설정
+                .build()                    // 파서 빌드
+                .parseSignedClaims(token)   // JWT 파싱 및 검증
+                .getPayload();              // 페이로드(Claims) 반환
+    }
+
+    // 쿠키에서 엑세스 토큰 획득
+    public String getAccessTokenInCookie(HttpServletRequest request) {
+        // Request header에서 BearerToken 획득(가져오기)
+        String bearerToken = request.getHeader(jwtConfig.getHeaderKey()); // 이것이 Authorization
+        // Bearer Token~ / PHP는 Bearer를 제거하고 들고오지만 자바는 직접 제거해야 한다.
+        // 디버깅 시 주의할 점
+
+        // 토큰 존재 여부 체크 & "Bearer"로 시작하는지 체크 / 토큰이 이상하거나 없을 때
+        if(bearerToken == null || !bearerToken.startsWith(jwtConfig.getScheme())) {
+            return null; // 엑세스 토큰 획득하는 처리를 스프링 시큐리티에서 처리 -> 예외처리(인증이 되지 않았다)
+        }
+
+        // 순수 토큰만 리턴 - bearer 제거
+        return bearerToken.substring(jwtConfig.getScheme().length() + 1); // +1을 하는 이유? -> 빈칸을 포함한 7글자를 제거하기 위함('bearer ')
     }
 }
