@@ -17,9 +17,9 @@ public class AuthController {
     @PostMapping("login") // get는 GetMapping을 사용하면 된다.
     // 위에 import가 되어야 한다.
     public String login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-        // return jwtConfig.getIssuer();
-        // return authService.login();
-        return  loginRequestDTO.getAccount() + ":" + loginRequestDTO.getPassword();
+        // return jwtConfig.getIssuer(); // return authService.login();
+        // return  loginRequestDTO.getAccount() + ":" + loginRequestDTO.getPassword();
+        return authService.login(loginRequestDTO);
     }
 
     @GetMapping("/test")

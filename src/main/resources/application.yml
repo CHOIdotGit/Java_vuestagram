@@ -1,16 +1,33 @@
 spring:
   application:
     name: vuestagram
-  # MariaDB ??
+  # MariaDB 설정
   datasource:
     url: jdbc:mariadb://localhost:3306/vuestagram
     username: root
     password: php504
     driver-class-name: org.mariadb.jdbc.Driver
 
-# config ??
+  # JPA 관련
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true # 개발할 때 true로 설정하는 경우가 많다.
+    properties:
+      hibernate:
+        format_sql: true # sql은 단순 문자열이라서 적절하게 개행과 인덴트를 넣어준다.
+    defer-datasource-initialization: true
+    # 서버를 끌 때, 테이블을 드랍하는데, 데이터를 다시 넣어주기 위한 sql파일을 미리 만들어 준다.
+    # true면 실행, flase면 실행하지 않음
+  sql:
+    init:
+      data-locations: classpath*::db/data.sql # 실행할 파일의 경로 - resources->db->sql실행
+      mode: never
+      platform: all # 사용할 DB 설정. 지금은 all로 설정해도 문제 없음 DB에 따라 설정 값이 달라질 수 있음
+  # jpa를 설정하지 않아도 기본 값으로 동작한다.
+
+# config 설정
 config:
-# jwt?? jwt-config? ??? ? prefix??? ??? ???? ??.
   jwt:
     issuer: meerkat@green.com
     type: jwt
@@ -22,7 +39,6 @@ config:
     header-key: Authorization
     scheme: Bearer
     reiss-uri: /api/reissue-token
-    # yml? ?? ??? ???? ??? ??? '-'? ???? ??.
 
 # Slf4j 설정
 loggin:
