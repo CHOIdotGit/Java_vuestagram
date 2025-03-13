@@ -1,5 +1,6 @@
 package com.example.vuestagram.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class User {
     @Column(name = "account", unique = true, nullable = false, length = 20)
     private String account; // 데이터 타입은 앞의 'String'으로 설정한다.
 
+    @JsonIgnore
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
@@ -43,6 +45,7 @@ public class User {
     @Column(name = "gender", nullable = false, length = 1) // DB에 제약조건을 적용하는 이유? 데이터의 무결성을 지키기 위한 규칙
     private String gender;
 
+    @JsonIgnore
     @Column(name = "refresh_token", length = 512)
     private String refreshToken;
 

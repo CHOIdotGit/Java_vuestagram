@@ -1,9 +1,13 @@
 package com.example.vuestagram.service;
 
 import com.example.vuestagram.dto.request.LoginRequestDTO;
+import com.example.vuestagram.dto.response.ResponseLogin;
 import com.example.vuestagram.model.User;
 import com.example.vuestagram.repository.UserRepository;
+import com.example.vuestagram.util.CookieUtil;
 import com.example.vuestagram.util.jwt.JwtUtil;
+import com.example.vuestagram.util.jwt.config.JwtConfig;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,8 +20,10 @@ public class AuthService{
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CookieUtil cookieUtil;
+    private final JwtConfig jwtConfig;
 
-    public String login(LoginRequestDTO loginRequestDTO) {
+    public ResponseLogin login(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
         // User user = new User();
         // user.setUserId(2L);
         // Optional<User> result = userRepository.findById(9L);
@@ -39,7 +45,29 @@ public class AuthService{
         String accessToken = jwtUtil.generateAccessToken(result.get()); // result.get() -> user
         String refreshToken = jwtUtil.generateRefreshToken(result.get()); // user
 
-        return accessToken + " || " + refreshToken;
+        // 리프레시 토큰을 쿠키에 저장
+        cookieUtil.setCookie(
+                response
+                ,jwtConfig.getRefreshTokenCookieName()
+                ,refreshToken
+                ,jwtConfig.getRefreshTokenExpiry()
+                ,jwtConfig.getReissUri()
+        );
+
         // 컨트롤러에서 로그인 메소드 호출
+        // return accessToken + " || " + refreshToken;
+        return ResponseLogin.builder()
+                .accessToken(accessToken)
+                .userId(result.get().getUserId())
+                .account(result.get().getAccount())
+                .profile(result.get().getProfile())
+                .name(result.get().getName())
+                .build();
+        // ResponseLogin test = new ResponseLogin();
+        // 위는 IOPE?의 개념에 맞지 않음
+        // D.I 외부에서 자동으로 instance 주입
+        // test.setAccessToken(asd);
+        // test.setUser(user);
+        // return test;
     }
 }

@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     // 추상 메소드 정의
-    Optional<User> findByAccount(String account);
+    Optional<User> findByAccount(String account); // 추상 메소드만 정의
 }
